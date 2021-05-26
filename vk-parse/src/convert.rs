@@ -433,20 +433,21 @@ impl From<TypeMember> for vkxml::StructElement {
                 field.optional = def.optional;
                 field.type_enums = def.values;
                 match def.len {
-                    Some(mut value) => {
-                        let null_terminated_part = ",null-terminated";
-                        if value.as_str().ends_with(null_terminated_part) {
-                            field.null_terminate = true;
-                            let start = value.len() - null_terminated_part.len();
-                            value.drain(start..);
+                    Some(value) => {
+                        if value.contains('*') {
+                            field.array = Some(vkxml::ArrayType::Static);
+                        } else {
+                            field.array = Some(vkxml::ArrayType::Dynamic);
                         }
 
-                        if value.as_str() == "null-terminated" {
+                        if let Some(value) = value.strip_suffix(",null-terminated") {
+                            field.null_terminate = true;
+                            field.size = Some(value.to_owned());
+                        } else if value.as_str() == "null-terminated" {
                             field.null_terminate = true;
                         } else {
                             field.size = Some(value);
                         }
-                        field.array = Some(vkxml::ArrayType::Dynamic);
                     }
                     None => (),
                 }
