@@ -501,6 +501,19 @@ fn parse_type<R: Read>(ctx: &mut ParseCtx<R>, attributes: Vec<XmlAttribute>) -> 
         "deprecated"     => deprecated     = Some(a.value),
     }
 
+    let returnedonly = match returnedonly.as_deref() {
+        Some("true") => true,
+        Some("false") => false,
+        Some(value) => {
+            ctx.errors.push(Error::SchemaViolation {
+                xpath: ctx.xpath.clone(),
+                desc: format!("Unexpected value of 'returnedonly' attribute: {}", value),
+            });
+            false
+        }
+        None => false,
+    };
+
     match_elements_combine_text! {ctx, attributes, code,
         "member" => {
             let mut len = None;

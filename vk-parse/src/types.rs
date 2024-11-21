@@ -240,7 +240,7 @@ pub struct Type {
         feature = "serialize",
         serde(default, skip_serializing_if = "is_default")
     )]
-    pub returnedonly: Option<String>,
+    pub returnedonly: bool,
 
     #[cfg_attr(
         feature = "serialize",

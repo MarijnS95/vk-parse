@@ -366,7 +366,7 @@ impl From<TypesChild> for Option<vkxml::DefinitionsElement> {
                         let mut s = vkxml::Struct {
                             name: t.name.unwrap_or(String::new()),
                             notation: t.comment,
-                            is_return: t.returnedonly.unwrap_or(String::new()).as_str() == "true",
+                            is_return: t.returnedonly,
                             extends: t.structextends,
                             elements: Vec::new(),
                         };
